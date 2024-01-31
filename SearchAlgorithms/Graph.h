@@ -19,6 +19,18 @@ struct Node {
 
 };
 
+struct Path {
+
+    vector<string> nodes;
+
+    Path(const string& path);
+    Path(const vector<string>& nodes);
+
+    string getCompactedRepresentation() const;
+    Path appendNode(const string& newNode) const;
+
+};
+
 struct Graph {
 
     vector<Node> nodes;
@@ -27,6 +39,12 @@ struct Graph {
     Graph(const string& filename);
 
     void writeToFile(const string& filename) const;
+    Node getNodeByName(const string& name) const;
+    Node getStartingNode() const;
+
+    double getArcLength(const string& fromNode, const string& toNode) const;
+    double getPathLength(const Path& path) const;
+    double getPathHeuristic(const Path& path) const;
 
 };
 

@@ -62,6 +62,22 @@ string Node::toString() const {
     
 }
 
+Path::Path(const string& path)
+: nodes(strUtil::split(path, ", "))
+{ }
+
+Path::Path(const vector<string>& nodes)
+: nodes(nodes)
+{ }
+
+string Path::getCompactedRepresentation() const {
+    return strUtil::join(nodes, ", ");
+}
+
+Path Path::appendNode(const string& newNode) const {
+    return Path(this->getCompactedRepresentation() + ", " + newNode);
+}
+
 Graph::Graph(const vector<Node>& nodes)
 : nodes(nodes)
 { }
@@ -79,4 +95,42 @@ void Graph::writeToFile(const string& filename) const {
         return node.toString();
     });
     file::outputVecTo(lines, filename);
+}
+
+Node Graph::getNodeByName(const string& name) const {
+    for (const Node& node : this->nodes) {
+        if (node.name == name) {
+            return node;
+        }
+    }
+}
+
+Node Graph::getStartingNode() const {
+    for (const Node& node : this->nodes) {
+        if (node.isStart) {
+            return node;
+        }
+    }
+}
+
+double Graph::getArcLength(const string& fromNode, const string& toNode) const {
+    Node from = this->getNodeByName(fromNode);
+    for (const auto& [name, dist] : from.neighbours) {
+        if (name == toNode) {
+            return dist;
+        }
+    }
+    throw runtime_error("there is no arc from " + fromNode + " to " + toNode);
+}
+
+double Graph::getPathLength(const Path& path) const {
+    int length = 0;
+    for (int i = 0; i < path.nodes.size() - 1; i++) {
+        length += this->getArcLength(path.nodes.at(i), path.nodes.at(i + 1));
+    }
+    return length;
+}
+
+double Graph::getPathHeuristic(const Path& path) const {
+    return this->getNodeByName(path.nodes.back()).heuristic;
 }
