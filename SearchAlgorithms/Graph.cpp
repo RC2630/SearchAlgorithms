@@ -2,6 +2,8 @@
 
 #include "general/file.h"
 #include "general/parseArguments.h"
+#include "general/abstractFunctions.h"
+#include "general/numberUtility.h"
 
 Node::Node(const string& name, double heuristic, bool isStart, bool isGoal, const vector<pair<string, double>>& neighbours)
 : name(name), heuristic(heuristic), isStart(isStart), isGoal(isGoal), neighbours(neighbours)
@@ -36,6 +38,30 @@ Node::Node(const string& line) {
 
 }
 
+string Node::toString() const {
+
+    vector<string> parts = {this->name, numUtil::simplify(to_string(this->heuristic))};
+    if (this->isGoal) {
+        parts.push_back("G");
+    } else if (this->isStart) {
+        parts.push_back("S");
+    }
+    parts.push_back(":");
+
+    if (this->neighbours.empty()) {
+        parts.push_back("none");
+        return strUtil::join(parts, " ");
+    }
+
+    for (const auto& [neighbourName, distanceToNeighbour] : this->neighbours) {
+        parts.push_back(neighbourName);
+        parts.push_back(numUtil::simplify(to_string(distanceToNeighbour)));
+    }
+
+    return strUtil::join(parts, " ");
+    
+}
+
 Graph::Graph(const vector<Node>& nodes)
 : nodes(nodes)
 { }
@@ -46,4 +72,11 @@ Graph::Graph(const string& filename) {
     for (const string& line : nodeLines) {
         this->nodes.push_back(Node(line));
     }
+}
+
+void Graph::writeToFile(const string& filename) const {
+    vector<string> lines = absFunc::map<Node, string>(this->nodes, [] (const Node& node) {
+        return node.toString();
+    });
+    file::outputVecTo(lines, filename);
 }

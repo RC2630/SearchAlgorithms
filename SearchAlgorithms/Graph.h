@@ -15,6 +15,8 @@ struct Node {
     Node(const string& name, double heuristic, bool isStart, bool isGoal, const vector<pair<string, double>>& neighbours);
     Node(const string& line);
 
+    string toString() const;
+
 };
 
 struct Graph {
@@ -23,6 +25,8 @@ struct Graph {
 
     Graph(const vector<Node>& nodes);
     Graph(const string& filename);
+
+    void writeToFile(const string& filename) const;
 
 };
 

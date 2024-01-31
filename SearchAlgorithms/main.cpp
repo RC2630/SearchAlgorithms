@@ -5,5 +5,6 @@ const string OUTPUT_FILE = "file/output.txt";
 
 int main() {
     Graph g(INPUT_FILE);
+    g.writeToFile(OUTPUT_FILE);
     cout << "done!\n";
 }
