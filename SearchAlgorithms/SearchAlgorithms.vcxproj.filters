@@ -63,6 +63,9 @@
     <ClInclude Include="general\customPrint.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
+    <ClCompile Include="Graph.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="general\binaryUtility.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="general\customPrint.cpp">
       <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
