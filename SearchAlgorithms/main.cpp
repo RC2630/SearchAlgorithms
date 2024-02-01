@@ -2,9 +2,11 @@
 #include "Algorithms.h"
 
 #include "general/ansi_codes.h"
+#include "general/parseArguments.h"
 
 const string INPUT_FILE = "file/input.txt";
 const string OUTPUT_FILE = "file/output.txt";
+const int DEFAULT_PATH_VISIT_LIMIT = 1000;
 
 const string HELP =
 
@@ -35,11 +37,41 @@ const string HELP =
     "COMMANDS:\n\n"
     
     "/help = display this help message\n"
-    "/exit = terminate the program";
+    "/exit = terminate the program\n"
+    "/limit = display the current path visit limit (# of paths visited before timeout)\n"
+    "/limit <new_limit> = set the path visit limit (# of paths visited before timeout) to new_limit\n\n"
+    
+    "/dfs = perform depth-first search";
+
+void performSearchAlgorithm(const Algorithms& algorithms, const string& algorithmName) {
+    
+    PathWithInfo solution;
+
+    try {
+
+        if (algorithmName == "DFS") {
+            solution = algorithms.depthFirstSearch();
+        } else {
+            throw runtime_error("algorithm name does not correspond to any valid search algorithm");
+        }
+
+        cout << "\nA solution has been found!\n"
+             << "\nSolution path: " << ANSI_BLUE << solution.path.getCompactedRepresentation() << ANSI_NORMAL
+             << "\nTotal length of solution path: " << ANSI_BLUE << solution.totalLength << ANSI_NORMAL
+             << "\n# of arcs in solution path: " << ANSI_BLUE << solution.numArcs << ANSI_NORMAL << "\n";
+
+    } catch (const NoSolutionPathException& e) {
+        cout << ANSI_RED << "\nNo solution path has been found.\n" << ANSI_NORMAL;
+    } catch (const StuckInCycleException& e) {
+        cout << ANSI_RED << "\nThe algorithm appears to be stuck in a cycle. Please update the path visit limit if necessary.\n"
+             << ANSI_NORMAL;
+    }
+
+}
 
 void run() {
     
-    Algorithms algorithms(INPUT_FILE, OUTPUT_FILE);
+    Algorithms algorithms(INPUT_FILE, OUTPUT_FILE, DEFAULT_PATH_VISIT_LIMIT);
     cout << "\nWelcome to the search algorithms program! Please type " << ANSI_YELLOW << "/help" << ANSI_NORMAL
          << " to learn how to use this program.\n";
 
@@ -50,13 +82,21 @@ void run() {
         getline(cin >> ws, command);
         cout << ANSI_NORMAL;
 
-        if (command == "/help") {
+        if (parse::commandIs(command, "/help")) {
             cout << "\n" << ANSI_BLUE << HELP << ANSI_NORMAL << "\n";
-        } else if (command == "/exit") {
+        } else if (parse::commandIs(command, "/exit")) {
             cout << ANSI_BLUE << "\nThank you for using the search algorithms program. See you later!\n" << ANSI_NORMAL;
             break;
+        } else if (parse::commandIs(command, "/limit") && parse::numArguments(command) == 0) {
+            cout << "\nThe current path visit limit is " << algorithms.pathVisitLimit << ".\n";
+        } else if (parse::commandIs(command, "/limit") && parse::numArguments(command) == 1) {
+            algorithms.pathVisitLimit = parse::parseNumericalArgument(command);
+            cout << "\nThe path visit limit has been updated to " << algorithms.pathVisitLimit << ".\n";
+        } else if (parse::commandIs(command, "/dfs")) {
+            performSearchAlgorithm(algorithms, "DFS");
         } else {
-            cout << ANSI_RED << "\nSorry, but that is not a valid command. Please try again!\n" << ANSI_NORMAL;
+            cout << ANSI_RED << "\nSorry, but your command either does not exist or has the wrong number of arguments. "
+                 << "Please try again!\n" << ANSI_NORMAL;
         }
 
     }

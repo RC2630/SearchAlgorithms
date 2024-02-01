@@ -31,6 +31,19 @@ struct Path {
 
 };
 
+struct PathWithInfo {
+
+    Path path;
+    double totalLength;
+    int numArcs;
+    double heuristic;
+
+    PathWithInfo(const Path& path, double length, int arcs, double heuristic);
+    PathWithInfo(const Path& path, double length, double heuristic);
+    PathWithInfo();
+
+};
+
 struct Graph {
 
     vector<Node> nodes;
@@ -45,6 +58,7 @@ struct Graph {
     double getArcLength(const string& fromNode, const string& toNode) const;
     double getPathLength(const Path& path) const;
     double getPathHeuristic(const Path& path) const;
+    PathWithInfo buildPathWithInfo(const Path& path) const;
 
 };
 

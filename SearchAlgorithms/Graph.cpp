@@ -78,6 +78,18 @@ Path Path::appendNode(const string& newNode) const {
     return Path(this->getCompactedRepresentation() + ", " + newNode);
 }
 
+PathWithInfo::PathWithInfo(const Path& path, double length, int arcs, double heuristic)
+: path(path), totalLength(length), numArcs(arcs), heuristic(heuristic)
+{ }
+
+PathWithInfo::PathWithInfo(const Path& path, double length, double heuristic)
+: path(path), totalLength(length), numArcs(path.nodes.size() - 1), heuristic(heuristic)
+{ }
+
+PathWithInfo::PathWithInfo()
+: path(Path(vector<string>())), totalLength(0), numArcs(0), heuristic(0)
+{ }
+
 Graph::Graph(const vector<Node>& nodes)
 : nodes(nodes)
 { }
@@ -133,4 +145,8 @@ double Graph::getPathLength(const Path& path) const {
 
 double Graph::getPathHeuristic(const Path& path) const {
     return this->getNodeByName(path.nodes.back()).heuristic;
+}
+
+PathWithInfo Graph::buildPathWithInfo(const Path& path) const {
+    return PathWithInfo(path, this->getPathLength(path), this->getPathHeuristic(path));
 }
