@@ -25,6 +25,7 @@ struct Algorithms {
 
     PathWithInfo depthFirstSearch(bool reverseNeighbourInsertionOrder = false) const;
     PathWithInfo breadthFirstSearch(bool reverseNeighbourInsertionOrder = false) const;
+    PathWithInfo lowestCostFirstSearch(bool reverseNeighbourInsertionOrder = false) const;
 
 };
 
