@@ -51,7 +51,9 @@ const string HELP =
     "Currently, the available search algorithms to use are:\n"
     "1. \"dfs\" (depth-first search)\n"
     "2. \"bfs\" (breadth-first search)\n"
-    "3. \"lcfs\" (lowest-cost-first search)\n\n"
+    "3. \"lcfs\" (lowest-cost-first search)\n"
+    "4. \"bestfs\" (best-first search)\n"
+    "5. \"A*\" (classic A* search)\n\n"
     
     "Here are some examples of using the \"/search\" command:\n"
     "/search dfs rev = perform depth-first search with the insertion order of neighbours being reversed\n"
@@ -69,6 +71,10 @@ void performSearchAlgorithm(const Algorithms& algorithms, const string& algorith
             solution = algorithms.breadthFirstSearch(reversed);
         } else if (algorithmName == "lcfs") {
             solution = algorithms.lowestCostFirstSearch(reversed);
+        } else if (algorithmName == "bestfs") {
+            solution = algorithms.bestFirstSearch(reversed);
+        } else if (algorithmName == "A*") {
+            solution = algorithms.aStarSearch(reversed);
         } else {
             throw runtime_error("algorithm name does not correspond to any valid search algorithm");
         }

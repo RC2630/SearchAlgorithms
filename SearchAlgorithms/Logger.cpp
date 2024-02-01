@@ -3,13 +3,13 @@
 #include "general/numberUtility.h"
 #include "general/file.h"
 
-Logger::Logger(const Graph& graph) {
+Logger::Logger(const Graph& graph, const string& algorithm, bool reversed) {
 
     // setting the logger's graph to the input graph
     this->graph = graph;
     
     // initializing log headers
-    vector<string> logHeaders = {"GRAPH:", "NODES VISITED:", "FRONTIER:", "RESULT:"};
+    vector<string> logHeaders = {"GRAPH:", "ALGORITHM:", "NODES VISITED:", "FRONTIER:", "RESULT:"};
     int logHeaderIndex = 0;
     auto makeLogHeader = [&logHeaders] (int index) -> vector<string> {
         return {logHeaders.at(index), string(logHeaders.at(index).size(), '-')};
@@ -17,6 +17,10 @@ Logger::Logger(const Graph& graph) {
 
     // creating logs
     graphLog = vecUtil::concatenate<string>({makeLogHeader(logHeaderIndex++), graph.toStringVector()});
+    algorithmLog = vecUtil::concatenate<string>({makeLogHeader(logHeaderIndex++), {
+        "Algorithm name: " + algorithm,
+        "Order of insertion for neighbours: " + string(reversed ? "reversed" : "ordinary")
+    }});
     nodeVisitLog = {makeLogHeader(logHeaderIndex++)};
     frontierLog = {makeLogHeader(logHeaderIndex++)};
     resultLog = {makeLogHeader(logHeaderIndex++)};
@@ -75,7 +79,7 @@ void Logger::writeToFile(const string& filename) {
 
     // putting all the individual logs together to form the final complete log
     vector<string> outputLog = vecUtil::concatenate<string>({
-        graphLog, {""}, nodeVisitLog, {""}, frontierLog, {""}, resultLog
+        graphLog, {""}, algorithmLog, {""}, nodeVisitLog, {""}, frontierLog, {""}, resultLog
     });
 
     // writing the final complete log to the output file

@@ -31,7 +31,7 @@ PathWithInfo Algorithms::depthFirstSearch(bool reverseNeighbourInsertionOrder) c
     
     // setting up
     Graph graph(this->inputFile);
-    Logger logger(graph);
+    Logger logger(graph, "depth-first search (DFS)", reverseNeighbourInsertionOrder);
 
     // initializing frontier
     stack<Path> frontier;
@@ -89,7 +89,7 @@ PathWithInfo Algorithms::breadthFirstSearch(bool reverseNeighbourInsertionOrder)
 
     // setting up
     Graph graph(this->inputFile);
-    Logger logger(graph);
+    Logger logger(graph, "breadth-first search (BFS)", reverseNeighbourInsertionOrder);
 
     // initializing frontier
     queue<Path> frontier;
@@ -147,7 +147,7 @@ PathWithInfo Algorithms::lowestCostFirstSearch(bool reverseNeighbourInsertionOrd
 
     // setting up
     Graph graph(this->inputFile);
-    Logger logger(graph);
+    Logger logger(graph, "lowest-cost-first search (LCFS)", reverseNeighbourInsertionOrder);
 
     // creating lambda for priority queue
     auto lowestCostComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
@@ -169,7 +169,133 @@ PathWithInfo Algorithms::lowestCostFirstSearch(bool reverseNeighbourInsertionOrd
             break;
         }
 
-        // remove path from front of queue and get the node to examine from the end of the current path
+        // remove path from front of priority queue and get the node to examine from the end of the current path
+        PathWithInfo currPathRemoved = frontier.top();
+        frontier.pop();
+        Node currNodeToExamine = logger.removeFromFrontier(currPathRemoved.path);
+
+        // check if current node is a goal (i.e. current path is a solution)
+        if (currNodeToExamine.isGoal) {
+            logger.findSolution(currPathRemoved.path);
+            break;
+        }
+
+        // add all neighbours of current node to frontier
+        auto neighbours =
+            reverseNeighbourInsertionOrder ? vecUtil::reverse(currNodeToExamine.neighbours) : currNodeToExamine.neighbours;
+        for (const auto& [neighbourName, distToNeighbour] : neighbours) {
+            currPathToInsert = graph.buildPathWithInfo(currPathRemoved.path.appendNode(neighbourName));
+            frontier.push(currPathToInsert);
+            logger.insertIntoFrontier(currPathToInsert.path);
+        }
+
+    }
+
+    // finalizing the logs and writing them to the output file
+    logger.writeToFile(this->outputFile);
+
+    // throw exceptions if algorithm was stuck in a cycle or there is no solution path
+    if (logger.cycleDetected) {
+        throw StuckInCycleException();
+    } else if (logger.noSolution) {
+        throw NoSolutionPathException();
+    }
+
+    // return the solution path if one exists and has been found
+    return logger.solution;
+
+}
+
+PathWithInfo Algorithms::bestFirstSearch(bool reverseNeighbourInsertionOrder) const {
+
+    // setting up
+    Graph graph(this->inputFile);
+    Logger logger(graph, "best-first search (BestFS)", reverseNeighbourInsertionOrder);
+
+    // creating lambda for priority queue
+    auto lowestCostComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
+        return path1.heuristic > path2.heuristic;
+    };
+
+    // initializing frontier
+    priority_queue<PathWithInfo, vector<PathWithInfo>, decltype(lowestCostComparator)> frontier(lowestCostComparator);
+    PathWithInfo currPathToInsert = graph.buildPathWithInfo(Path(graph.getStartingNode().name));
+    frontier.push(currPathToInsert);
+    logger.insertIntoFrontier(currPathToInsert.path);
+
+    // looping until solution found, frontier empty, or stuck in cycle
+    while (!frontier.empty()) {
+
+        // stuck in a cycle
+        if (logger.pathsExamined == this->pathVisitLimit) {
+            logger.cycleDetected = true;
+            break;
+        }
+
+        // remove path from front of priority queue and get the node to examine from the end of the current path
+        PathWithInfo currPathRemoved = frontier.top();
+        frontier.pop();
+        Node currNodeToExamine = logger.removeFromFrontier(currPathRemoved.path);
+
+        // check if current node is a goal (i.e. current path is a solution)
+        if (currNodeToExamine.isGoal) {
+            logger.findSolution(currPathRemoved.path);
+            break;
+        }
+
+        // add all neighbours of current node to frontier
+        auto neighbours =
+            reverseNeighbourInsertionOrder ? vecUtil::reverse(currNodeToExamine.neighbours) : currNodeToExamine.neighbours;
+        for (const auto& [neighbourName, distToNeighbour] : neighbours) {
+            currPathToInsert = graph.buildPathWithInfo(currPathRemoved.path.appendNode(neighbourName));
+            frontier.push(currPathToInsert);
+            logger.insertIntoFrontier(currPathToInsert.path);
+        }
+
+    }
+
+    // finalizing the logs and writing them to the output file
+    logger.writeToFile(this->outputFile);
+
+    // throw exceptions if algorithm was stuck in a cycle or there is no solution path
+    if (logger.cycleDetected) {
+        throw StuckInCycleException();
+    } else if (logger.noSolution) {
+        throw NoSolutionPathException();
+    }
+
+    // return the solution path if one exists and has been found
+    return logger.solution;
+
+}
+
+PathWithInfo Algorithms::aStarSearch(bool reverseNeighbourInsertionOrder) const {
+
+    // setting up
+    Graph graph(this->inputFile);
+    Logger logger(graph, "A* search (A*)", reverseNeighbourInsertionOrder);
+
+    // creating lambda for priority queue
+    auto lowestCostComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
+        return path1.totalLength + path1.heuristic > path2.totalLength + path2.heuristic;
+    };
+
+    // initializing frontier
+    priority_queue<PathWithInfo, vector<PathWithInfo>, decltype(lowestCostComparator)> frontier(lowestCostComparator);
+    PathWithInfo currPathToInsert = graph.buildPathWithInfo(Path(graph.getStartingNode().name));
+    frontier.push(currPathToInsert);
+    logger.insertIntoFrontier(currPathToInsert.path);
+
+    // looping until solution found, frontier empty, or stuck in cycle
+    while (!frontier.empty()) {
+
+        // stuck in a cycle
+        if (logger.pathsExamined == this->pathVisitLimit) {
+            logger.cycleDetected = true;
+            break;
+        }
+
+        // remove path from front of priority queue and get the node to examine from the end of the current path
         PathWithInfo currPathRemoved = frontier.top();
         frontier.pop();
         Node currNodeToExamine = logger.removeFromFrontier(currPathRemoved.path);
