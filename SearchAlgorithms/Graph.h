@@ -42,6 +42,8 @@ struct PathWithInfo {
     PathWithInfo(const Path& path, double length, double heuristic);
     PathWithInfo();
 
+    string toString() const;
+
 };
 
 struct Graph {
