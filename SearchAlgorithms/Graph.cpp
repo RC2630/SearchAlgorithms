@@ -102,10 +102,14 @@ Graph::Graph(const string& filename) {
     }
 }
 
-void Graph::writeToFile(const string& filename) const {
-    vector<string> lines = absFunc::map<Node, string>(this->nodes, [] (const Node& node) {
+vector<string> Graph::toStringVector() const {
+    return absFunc::map<Node, string>(this->nodes, [] (const Node& node) {
         return node.toString();
     });
+}
+
+void Graph::writeToFile(const string& filename) const {
+    vector<string> lines = this->toStringVector();
     file::outputVecTo(lines, filename);
 }
 
