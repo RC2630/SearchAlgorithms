@@ -213,12 +213,12 @@ PathWithInfo Algorithms::bestFirstSearch(bool reverseNeighbourInsertionOrder) co
     Logger logger(graph, "best-first search (BestFS)", reverseNeighbourInsertionOrder);
 
     // creating lambda for priority queue
-    auto lowestCostComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
+    auto lowestHeuristicComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
         return path1.heuristic > path2.heuristic;
     };
 
     // initializing frontier
-    priority_queue<PathWithInfo, vector<PathWithInfo>, decltype(lowestCostComparator)> frontier(lowestCostComparator);
+    priority_queue<PathWithInfo, vector<PathWithInfo>, decltype(lowestHeuristicComparator)> frontier(lowestHeuristicComparator);
     PathWithInfo currPathToInsert = graph.buildPathWithInfo(Path(graph.getStartingNode().name));
     frontier.push(currPathToInsert);
     logger.insertIntoFrontier(currPathToInsert.path);
@@ -276,12 +276,12 @@ PathWithInfo Algorithms::aStarSearch(bool reverseNeighbourInsertionOrder) const 
     Logger logger(graph, "A* search (A*)", reverseNeighbourInsertionOrder);
 
     // creating lambda for priority queue
-    auto lowestCostComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
+    auto lowestFvalueComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
         return path1.totalLength + path1.heuristic > path2.totalLength + path2.heuristic;
     };
 
     // initializing frontier
-    priority_queue<PathWithInfo, vector<PathWithInfo>, decltype(lowestCostComparator)> frontier(lowestCostComparator);
+    priority_queue<PathWithInfo, vector<PathWithInfo>, decltype(lowestFvalueComparator)> frontier(lowestFvalueComparator);
     PathWithInfo currPathToInsert = graph.buildPathWithInfo(Path(graph.getStartingNode().name));
     frontier.push(currPathToInsert);
     logger.insertIntoFrontier(currPathToInsert.path);
