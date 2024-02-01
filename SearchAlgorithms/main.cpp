@@ -41,18 +41,18 @@ const string HELP =
     "/limit = display the current path visit limit (# of paths visited before timeout)\n"
     "/limit <new_limit> = set the path visit limit (# of paths visited before timeout) to new_limit\n\n"
     
-    "/dfs <rev?> = perform depth-first search (\"/dfs rev\" will reverse the order of neighbour insertions into the frontier)";
+    "/search <algorithm> <rev?> = perform search using the given algorithm\n"
+    "Available algorithms to use are: \"dfs\".\n"
+    "The inclusion of the \"rev\" argument will reverse the order in which neighbours are inserted into the frontier.";
 
-void performSearchAlgorithm(const Algorithms& algorithms, const string& algorithmName) {
+void performSearchAlgorithm(const Algorithms& algorithms, const string& algorithmName, bool reversed) {
     
     PathWithInfo solution;
 
     try {
 
-        if (algorithmName == "DFS") {
-            solution = algorithms.depthFirstSearch();
-        } else if (algorithmName == "DFS reversed") {
-            solution = algorithms.depthFirstSearch(true);
+        if (algorithmName == "dfs") {
+            solution = algorithms.depthFirstSearch(reversed);
         } else {
             throw runtime_error("algorithm name does not correspond to any valid search algorithm");
         }
@@ -94,10 +94,8 @@ void run() {
         } else if (parse::commandIs(command, "/limit") && parse::numArguments(command) == 1) {
             algorithms.pathVisitLimit = parse::parseNumericalArgument(command);
             cout << "\nThe path visit limit has been updated to " << algorithms.pathVisitLimit << ".\n";
-        } else if (parse::commandIs(command, "/dfs") && parse::numArguments(command) == 0) {
-            performSearchAlgorithm(algorithms, "DFS");
-        } else if (parse::commandIs(command, "/dfs") && parse::numArguments(command) == 1) {
-            performSearchAlgorithm(algorithms, "DFS reversed");
+        } else if (parse::commandIs(command, "/search")) {
+            performSearchAlgorithm(algorithms, parse::parseArgument(command, 1), parse::numArguments(command) == 2);
         } else {
             cout << ANSI_RED << "\nSorry, but your command either does not exist or has the wrong number of arguments. "
                  << "Please try again!\n" << ANSI_NORMAL;
