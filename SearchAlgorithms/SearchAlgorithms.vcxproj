@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Algorithms.h" />
     <ClInclude Include="general\abstractFunctions.h" />
     <ClInclude Include="general\ansi_codes.h" />
     <ClInclude Include="general\binaryUtility.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Graph.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Algorithms.cpp" />
     <ClCompile Include="general\binaryUtility.cpp" />
     <ClCompile Include="general\customPrint.cpp" />
     <ClCompile Include="general\file.cpp" />

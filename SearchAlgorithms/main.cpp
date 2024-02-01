@@ -1,4 +1,5 @@
 #include "Graph.h"
+#include "Algorithms.h"
 
 #include "general/ansi_codes.h"
 
@@ -38,6 +39,7 @@ const string HELP =
 
 void run() {
     
+    Algorithms algorithms(INPUT_FILE, OUTPUT_FILE);
     cout << "\nWelcome to the search algorithms program! Please type " << ANSI_YELLOW << "/help" << ANSI_NORMAL
          << " to learn how to use this program.\n";
 
