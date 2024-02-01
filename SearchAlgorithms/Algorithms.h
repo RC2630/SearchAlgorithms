@@ -23,7 +23,7 @@ struct Algorithms {
 
     Algorithms(const string& in, const string& out, int limit);
 
-    PathWithInfo depthFirstSearch() const;
+    PathWithInfo depthFirstSearch(bool reverseNeighbourInsertionOrder = false) const;
 
 };
 
