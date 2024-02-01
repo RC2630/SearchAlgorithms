@@ -52,6 +52,7 @@ struct Graph {
 
     Graph(const vector<Node>& nodes);
     Graph(const string& filename);
+    Graph();
 
     vector<string> toStringVector() const;
     void writeToFile(const string& filename) const;

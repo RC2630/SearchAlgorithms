@@ -107,6 +107,10 @@ Graph::Graph(const string& filename) {
     }
 }
 
+Graph::Graph()
+: nodes({})
+{ }
+
 vector<string> Graph::toStringVector() const {
     return absFunc::map<Node, string>(this->nodes, [] (const Node& node) {
         return node.toString();
