@@ -144,6 +144,7 @@
     <ClInclude Include="general\stringUtility.h" />
     <ClInclude Include="general\vectorUtility.h" />
     <ClInclude Include="Graph.h" />
+    <ClInclude Include="Logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Algorithms.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="general\statisticsUtility.cpp" />
     <ClCompile Include="general\stringUtility.cpp" />
     <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
