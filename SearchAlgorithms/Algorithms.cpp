@@ -83,3 +83,8 @@ PathWithInfo Algorithms::depthFirstSearch(bool reverseNeighbourInsertionOrder) c
     return logger.solution;
 
 }
+
+PathWithInfo Algorithms::breadthFirstSearch(bool reverseNeighbourInsertionOrder) const {
+    // TODO
+    throw 0;
+}

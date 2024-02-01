@@ -39,11 +39,22 @@ const string HELP =
     "/help = display this help message\n"
     "/exit = terminate the program\n"
     "/limit = display the current path visit limit (# of paths visited before timeout)\n"
-    "/limit <new_limit> = set the path visit limit (# of paths visited before timeout) to new_limit\n\n"
+    "/limit <new_limit> = set the path visit limit (# of paths visited before timeout) to new_limit\n"
+    "/search <algorithm> <rev?> = perform search using the given algorithm (see section below for details)\n\n"
+
+    "SEARCH COMMAND DETAILS:\n\n"
+
+    "The \"/search\" command is the primary purpose of this program, since it performs search algorithms.\n"
+    "To use it, specify a search algorithm as well as an optional argument called \"rev\".\n"
+    "The inclusion of the \"rev\" argument will reverse the order in which neighbours are inserted into the frontier.\n\n"
+
+    "Currently, the available search algorithms to use are:\n"
+    "1. \"dfs\" (depth-first search)\n"
+    "2. \"bfs\" (breadth-first search)\n\n"
     
-    "/search <algorithm> <rev?> = perform search using the given algorithm\n"
-    "Available algorithms to use are: \"dfs\".\n"
-    "The inclusion of the \"rev\" argument will reverse the order in which neighbours are inserted into the frontier.";
+    "Here are some examples of using the \"/search\" command:\n"
+    "/search dfs rev = perform depth-first search with the insertion order of neighbours being reversed\n"
+    "/search bfs = perform breadth-first search with the insertion order of neighbours being ordinary";
 
 void performSearchAlgorithm(const Algorithms& algorithms, const string& algorithmName, bool reversed) {
     
@@ -53,6 +64,8 @@ void performSearchAlgorithm(const Algorithms& algorithms, const string& algorith
 
         if (algorithmName == "dfs") {
             solution = algorithms.depthFirstSearch(reversed);
+        } else if (algorithmName == "bfs") {
+            solution = algorithms.breadthFirstSearch(reversed);
         } else {
             throw runtime_error("algorithm name does not correspond to any valid search algorithm");
         }

@@ -24,6 +24,7 @@ struct Algorithms {
     Algorithms(const string& in, const string& out, int limit);
 
     PathWithInfo depthFirstSearch(bool reverseNeighbourInsertionOrder = false) const;
+    PathWithInfo breadthFirstSearch(bool reverseNeighbourInsertionOrder = false) const;
 
 };
 
