@@ -53,7 +53,7 @@ PathWithInfo Algorithms::depthFirstSearch(bool reverseNeighbourInsertionOrder) c
     Path currPathToInsert(graph.getStartingNode().name);
     frontier.push(currPathToInsert);
     frontierLog.push_back(
-        "insert #" + to_string(++pathsInserted) + ": " + graph.buildPathWithInfo(currPathToInsert).toString()
+        "+   insert " + to_string(++pathsInserted) + ": " + graph.buildPathWithInfo(currPathToInsert).toString()
     );
 
     // looping until solution found, frontier empty, or stuck in cycle
@@ -69,7 +69,7 @@ PathWithInfo Algorithms::depthFirstSearch(bool reverseNeighbourInsertionOrder) c
         Path currPathRemoved = frontier.top();
         frontier.pop();
         frontierLog.push_back(
-            "remove #" + to_string(++pathsExamined) + ": " + graph.buildPathWithInfo(currPathRemoved).toString()
+            "  - remove " + to_string(++pathsExamined) + ": " + graph.buildPathWithInfo(currPathRemoved).toString()
         );
         
         // get the node to examine from the end of the current path
@@ -90,7 +90,7 @@ PathWithInfo Algorithms::depthFirstSearch(bool reverseNeighbourInsertionOrder) c
             currPathToInsert = currPathRemoved.appendNode(neighbourName);
             frontier.push(currPathToInsert);
             frontierLog.push_back(
-                "insert #" + to_string(++pathsInserted) + ": " + graph.buildPathWithInfo(currPathToInsert).toString()
+                "+   insert " + to_string(++pathsInserted) + ": " + graph.buildPathWithInfo(currPathToInsert).toString()
             );
         }
 
