@@ -86,3 +86,7 @@ void Logger::writeToFile(const string& filename) {
     file::outputVecTo(outputLog, filename);
 
 }
+
+void Logger::deepenDepth() {
+    frontierLog.push_back("THE MAXIMUM DEPTH HAS BEEN UPDATED TO " + to_string(++currentDepth));
+}

@@ -6,7 +6,7 @@
 struct Logger {
 
     vector<string> graphLog, algorithmLog, nodeVisitLog, frontierLog, resultLog;
-    int pathsInserted = 0, pathsExamined = 0;
+    int pathsInserted = 0, pathsExamined = 0, currentDepth = 0;
     vector<string> nodesVisited;
     bool cycleDetected = false, noSolution = true;
     PathWithInfo solution;
@@ -18,6 +18,7 @@ struct Logger {
     Node removeFromFrontier(const Path& path);
     void findSolution(const Path& path);
     void writeToFile(const string& filename);
+    void deepenDepth();
 
 };
 

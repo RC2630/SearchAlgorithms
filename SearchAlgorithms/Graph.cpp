@@ -78,12 +78,16 @@ Path Path::appendNode(const string& newNode) const {
     return Path(this->getCompactedRepresentation() + ", " + newNode);
 }
 
+int Path::numArcs() const {
+    return this->nodes.size() - 1;
+}
+
 PathWithInfo::PathWithInfo(const Path& path, double length, int arcs, double heuristic)
 : path(path), totalLength(length), numArcs(arcs), heuristic(heuristic)
 { }
 
 PathWithInfo::PathWithInfo(const Path& path, double length, double heuristic)
-: path(path), totalLength(length), numArcs(path.nodes.size() - 1), heuristic(heuristic)
+: path(path), totalLength(length), numArcs(path.numArcs()), heuristic(heuristic)
 { }
 
 PathWithInfo::PathWithInfo()

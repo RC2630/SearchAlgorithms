@@ -53,7 +53,8 @@ const string HELP =
     "2. \"bfs\" (breadth-first search)\n"
     "3. \"lcfs\" (lowest-cost-first search)\n"
     "4. \"bestfs\" (best-first search)\n"
-    "5. \"A*\" (classic A* search)\n\n"
+    "5. \"A*\" (classic A* search)\n"
+    "6. \"ids\" (iterative deepening search)\n\n"
     
     "Here are some examples of using the \"/search\" command:\n"
     "/search dfs rev = perform depth-first search with the insertion order of neighbours being reversed\n"
@@ -75,6 +76,8 @@ void performSearchAlgorithm(const Algorithms& algorithms, const string& algorith
             solution = algorithms.bestFirstSearch(reversed);
         } else if (algorithmName == "A*") {
             solution = algorithms.aStarSearch(reversed);
+        } else if (algorithmName == "ids") {
+            solution = algorithms.iterativeDeepeningSearch(reversed);
         } else {
             throw runtime_error("algorithm name does not correspond to any valid search algorithm");
         }

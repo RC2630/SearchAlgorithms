@@ -28,6 +28,7 @@ struct Path {
 
     string getCompactedRepresentation() const;
     Path appendNode(const string& newNode) const;
+    int numArcs() const;
 
 };
 
