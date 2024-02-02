@@ -109,4 +109,5 @@ void Logger::findBetterSolution(const Path& path) {
 
 void Logger::ignoreCurrentPath() {
     this->frontierLog.back() += " [IGNORED]";
+    this->nodesVisited.back() = "(" + this->nodesVisited.back() + ")";
 }
