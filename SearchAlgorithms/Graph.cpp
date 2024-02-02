@@ -97,7 +97,11 @@ PathWithInfo::PathWithInfo()
 string PathWithInfo::toString() const {
     return this->path.getCompactedRepresentation() + " (length " + numUtil::simplify(to_string(this->totalLength)) +
            ", arcs " + to_string(this->numArcs) + ", heuristic " + numUtil::simplify(to_string(this->heuristic)) +
-           ", f " + numUtil::simplify(to_string(this->totalLength + this->heuristic)) + ")";
+           ", f " + numUtil::simplify(to_string(this->getFvalue())) + ")";
+}
+
+double PathWithInfo::getFvalue() const {
+    return this->totalLength + this->heuristic;
 }
 
 Graph::Graph(const vector<Node>& nodes)

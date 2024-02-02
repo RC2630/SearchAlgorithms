@@ -277,7 +277,7 @@ PathWithInfo Algorithms::aStarSearch(bool reverseNeighbourInsertionOrder) const 
 
     // creating lambda for priority queue
     auto lowestFvalueComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
-        return path1.totalLength + path1.heuristic > path2.totalLength + path2.heuristic;
+        return path1.getFvalue() > path2.getFvalue();
     };
 
     // initializing frontier
@@ -397,6 +397,81 @@ PathWithInfo Algorithms::iterativeDeepeningSearch(bool reverseNeighbourInsertion
 
     // this label marks the end of the outer loop, used for GOTO statements
     postOuterLoop:
+
+    // finalizing the logs and writing them to the output file
+    logger.writeToFile(this->outputFile);
+
+    // throw exceptions if algorithm was stuck in a cycle or there is no solution path
+    if (logger.cycleDetected) {
+        throw StuckInCycleException();
+    } else if (logger.noSolution) {
+        throw NoSolutionPathException();
+    }
+
+    // return the solution path if one exists and has been found
+    return logger.solution;
+
+}
+
+PathWithInfo Algorithms::branchAndBoundSearch() const {
+
+    // setting up
+    Graph graph(this->inputFile);
+    Logger logger(graph, "branch-and-bound search (B&B)", string("descending F-value"));
+
+    // initializing frontier
+    stack<Path> frontier;
+    Path currPathToInsert(graph.getStartingNode().name);
+    frontier.push(currPathToInsert);
+    logger.insertIntoFrontier(currPathToInsert);
+
+    // looping until frontier empty (either with solution found or not), or stuck in cycle
+    while (!frontier.empty()) {
+
+        // stuck in a cycle
+        if (logger.pathsExamined == this->pathVisitLimit) {
+            logger.cycleDetected = true;
+            break;
+        }
+
+        // remove path from top of stack and get the node to examine from the end of the current path
+        Path currPathRemoved = frontier.top();
+        frontier.pop();
+        Node currNodeToExamine = logger.removeFromFrontier(currPathRemoved);
+
+        // if the current path's F-value is worse than the current best solution length, then discard it without checking
+        if (graph.buildPathWithInfo(currPathRemoved).getFvalue() >= logger.currentBestSolutionLength) {
+            logger.ignoreCurrentPath();
+            continue;
+        }
+
+        // check if current node is a goal (i.e. current path is a solution), which at this point would be the best so far
+        if (currNodeToExamine.isGoal) {
+            logger.findBetterSolution(currPathRemoved);
+            continue;
+        }
+
+        // create a collection of paths to insert, one path per neighbour of the current node
+        vector<Path> pathsToInsert = absFunc::map_f<pair<string, double>, Path>(currNodeToExamine.neighbours, [&currPathRemoved] (
+            const pair<string, double>& neighbour
+        ) {
+            return currPathRemoved.appendNode(neighbour.first);
+        });
+
+        // sort the paths to insert by decreasing order of F-values
+        std::sort(pathsToInsert.begin(), pathsToInsert.end(), [&graph] (
+            const Path& path1, const Path& path2
+        ) {
+            return graph.buildPathWithInfo(path1).getFvalue() > graph.buildPathWithInfo(path2).getFvalue();
+        });
+
+        // add the paths to insert to frontier using the sorted order
+        for (const Path& currPathToInsert : pathsToInsert) {
+            frontier.push(currPathToInsert);
+            logger.insertIntoFrontier(currPathToInsert);
+        }
+
+    }
 
     // finalizing the logs and writing them to the output file
     logger.writeToFile(this->outputFile);

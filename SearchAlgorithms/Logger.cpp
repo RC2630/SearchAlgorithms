@@ -3,7 +3,11 @@
 #include "general/numberUtility.h"
 #include "general/file.h"
 
-Logger::Logger(const Graph& graph, const string& algorithm, bool reversed) {
+string Logger::getInsertionMode(bool reversed) {
+    return reversed ? "reversed" : "ordinary";
+}
+
+Logger::Logger(const Graph& graph, const string& algorithm, const string& insertionMode) {
 
     // setting the logger's graph to the input graph
     this->graph = graph;
@@ -19,13 +23,17 @@ Logger::Logger(const Graph& graph, const string& algorithm, bool reversed) {
     graphLog = vecUtil::concatenate<string>({makeLogHeader(logHeaderIndex++), graph.toStringVector()});
     algorithmLog = vecUtil::concatenate<string>({makeLogHeader(logHeaderIndex++), {
         "Algorithm name: " + algorithm,
-        "Order of insertion for neighbours: " + string(reversed ? "reversed" : "ordinary")
+        "Order of insertion for neighbours: " + insertionMode
     }});
     nodeVisitLog = {makeLogHeader(logHeaderIndex++)};
     frontierLog = {makeLogHeader(logHeaderIndex++)};
     resultLog = {makeLogHeader(logHeaderIndex++)};
 
 }
+
+Logger::Logger(const Graph& graph, const string& algorithm, bool reversed)
+: Logger(graph, algorithm, Logger::getInsertionMode(reversed))
+{ }
 
 void Logger::insertIntoFrontier(const Path& path) {
     frontierLog.push_back(
@@ -89,4 +97,16 @@ void Logger::writeToFile(const string& filename) {
 
 void Logger::deepenDepth() {
     frontierLog.push_back("THE MAXIMUM DEPTH HAS BEEN UPDATED TO " + to_string(++currentDepth));
+}
+
+void Logger::findBetterSolution(const Path& path) {
+    this->findSolution(path);
+    this->currentBestSolutionLength = solution.totalLength;
+    frontierLog.push_back(
+        "THE CURRENT BEST SOLUTION LENGTH HAS BEEN UPDATED TO " + numUtil::simplify(to_string(solution.totalLength))
+    );
+}
+
+void Logger::ignoreCurrentPath() {
+    this->frontierLog.back() += " [IGNORED]";
 }

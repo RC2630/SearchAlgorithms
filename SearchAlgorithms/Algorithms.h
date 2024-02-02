@@ -29,6 +29,7 @@ struct Algorithms {
     PathWithInfo bestFirstSearch(bool reverseNeighbourInsertionOrder = false) const;
     PathWithInfo aStarSearch(bool reverseNeighbourInsertionOrder = false) const;
     PathWithInfo iterativeDeepeningSearch(bool reverseNeighbourInsertionOrder) const;
+    PathWithInfo branchAndBoundSearch() const;
 
 };
 

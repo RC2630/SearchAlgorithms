@@ -46,6 +46,7 @@ const string HELP =
 
     "The \"/search\" command is the primary purpose of this program, since it performs search algorithms.\n"
     "To use it, specify a search algorithm as well as an optional argument called \"rev\".\n"
+    "The name of the search algorithm is case-insensitive, so feel free to use upper or lower case as you please.\n"
     "The inclusion of the \"rev\" argument will reverse the order in which neighbours are inserted into the frontier.\n\n"
 
     "Currently, the available search algorithms to use are:\n"
@@ -54,7 +55,8 @@ const string HELP =
     "3. \"lcfs\" (lowest-cost-first search)\n"
     "4. \"bestfs\" (best-first search)\n"
     "5. \"A*\" (classic A* search)\n"
-    "6. \"ids\" (iterative deepening search)\n\n"
+    "6. \"ids\" (iterative deepening search)\n"
+    "7. \"b&b\" (branch-and-bound search)\n\n"
     
     "Here are some examples of using the \"/search\" command:\n"
     "/search dfs rev = perform depth-first search with the insertion order of neighbours being reversed\n"
@@ -66,18 +68,20 @@ void performSearchAlgorithm(const Algorithms& algorithms, const string& algorith
 
     try {
 
-        if (algorithmName == "dfs") {
+        if (strUtil::equalsIgnoreCase(algorithmName, "dfs")) {
             solution = algorithms.depthFirstSearch(reversed);
-        } else if (algorithmName == "bfs") {
+        } else if (strUtil::equalsIgnoreCase(algorithmName, "bfs")) {
             solution = algorithms.breadthFirstSearch(reversed);
-        } else if (algorithmName == "lcfs") {
+        } else if (strUtil::equalsIgnoreCase(algorithmName, "lcfs")) {
             solution = algorithms.lowestCostFirstSearch(reversed);
-        } else if (algorithmName == "bestfs") {
+        } else if (strUtil::equalsIgnoreCase(algorithmName, "bestfs")) {
             solution = algorithms.bestFirstSearch(reversed);
-        } else if (algorithmName == "A*") {
+        } else if (strUtil::equalsIgnoreCase(algorithmName, "A*")) {
             solution = algorithms.aStarSearch(reversed);
-        } else if (algorithmName == "ids") {
+        } else if (strUtil::equalsIgnoreCase(algorithmName, "ids")) {
             solution = algorithms.iterativeDeepeningSearch(reversed);
+        } else if (strUtil::equalsIgnoreCase(algorithmName, "b&b")) {
+            solution = algorithms.branchAndBoundSearch();
         } else {
             throw runtime_error("algorithm name does not correspond to any valid search algorithm");
         }

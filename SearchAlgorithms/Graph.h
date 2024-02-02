@@ -44,6 +44,7 @@ struct PathWithInfo {
     PathWithInfo();
 
     string toString() const;
+    double getFvalue() const;
 
 };
 
