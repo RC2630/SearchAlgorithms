@@ -151,7 +151,9 @@ PathWithInfo Algorithms::lowestCostFirstSearch(bool reverseNeighbourInsertionOrd
 
     // creating lambda for priority queue
     auto lowestCostComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
-        return path1.totalLength > path2.totalLength;
+        return (path1.totalLength == path2.totalLength) ?
+               (path1.path.nodes > path2.path.nodes) :
+               (path1.totalLength > path2.totalLength);
     };
 
     // initializing frontier
@@ -214,7 +216,9 @@ PathWithInfo Algorithms::bestFirstSearch(bool reverseNeighbourInsertionOrder) co
 
     // creating lambda for priority queue
     auto lowestHeuristicComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
-        return path1.heuristic > path2.heuristic;
+        return (path1.heuristic == path2.heuristic) ?
+               (path1.path.nodes > path2.path.nodes) :
+               (path1.heuristic > path2.heuristic);
     };
 
     // initializing frontier
@@ -277,7 +281,9 @@ PathWithInfo Algorithms::aStarSearch(bool reverseNeighbourInsertionOrder) const 
 
     // creating lambda for priority queue
     auto lowestFvalueComparator = [] (const PathWithInfo& path1, const PathWithInfo& path2) {
-        return path1.getFvalue() > path2.getFvalue();
+        return (path1.getFvalue() == path2.getFvalue()) ?
+               (path1.path.nodes > path2.path.nodes) :
+               (path1.getFvalue() > path2.getFvalue());
     };
 
     // initializing frontier
@@ -413,11 +419,12 @@ PathWithInfo Algorithms::iterativeDeepeningSearch(bool reverseNeighbourInsertion
 
 }
 
-PathWithInfo Algorithms::branchAndBoundSearch() const {
+PathWithInfo Algorithms::branchAndBoundSearch(const string& mode) const {
 
     // setting up
     Graph graph(this->inputFile);
-    Logger logger(graph, "branch-and-bound search (B&B)", string("descending F-value"));
+    string modeDescription = (mode == "f") ? "descending F-value" : Logger::getInsertionMode(mode == "rev");
+    Logger logger(graph, "branch-and-bound search (B&B)", modeDescription);
 
     // initializing frontier
     stack<Path> frontier;
@@ -458,12 +465,20 @@ PathWithInfo Algorithms::branchAndBoundSearch() const {
             return currPathRemoved.appendNode(neighbour.first);
         });
 
-        // sort the paths to insert by decreasing order of F-values
-        std::sort(pathsToInsert.begin(), pathsToInsert.end(), [&graph] (
-            const Path& path1, const Path& path2
-        ) {
-            return graph.buildPathWithInfo(path1).getFvalue() > graph.buildPathWithInfo(path2).getFvalue();
-        });
+        // reverse the paths to insert if mode is "rev"
+        if (mode == "rev") {
+            pathsToInsert = vecUtil::reverse(pathsToInsert);
+        }
+
+        // sort the paths to insert by decreasing order of F-values if mode is "f"
+        if (mode == "f") {
+            std::sort(pathsToInsert.begin(), pathsToInsert.end(), [&graph] (
+                const Path& path1, const Path& path2
+            ) {
+                int f1 = graph.buildPathWithInfo(path1).getFvalue(), f2 = graph.buildPathWithInfo(path2).getFvalue();
+                return (f1 == f2) ? (path1.nodes > path2.nodes) : (f1 > f2);
+            });
+        }
 
         // add the paths to insert to frontier using the sorted order
         for (const Path& currPathToInsert : pathsToInsert) {

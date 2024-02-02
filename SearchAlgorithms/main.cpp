@@ -49,6 +49,13 @@ const string HELP =
     "The name of the search algorithm is case-insensitive, so feel free to use upper or lower case as you please.\n"
     "The inclusion of the \"rev\" argument will reverse the order in which neighbours are inserted into the frontier.\n\n"
 
+    "Specifically for branch-and-bound search, there is an additional option.\n"
+    "The order in which neighbours are added to the frontier can be ordinary, reversed, or by descending F-value.\n"
+    "The ordinary and reversed orders are specified the same way as for all the other search algorithms;\n"
+    "in other words, they are specified as \"/search b&b\" and \"/search b&b rev\", respectively.\n"
+    "The order by descending F-value is specified as \"/search b&b f\";\n"
+    "note that this is the only time that the 2nd argument of \"/search\" is allowed to take a value other than \"rev\".\n\n"
+
     "Currently, the available search algorithms to use are:\n"
     "1. \"dfs\" (depth-first search)\n"
     "2. \"bfs\" (breadth-first search)\n"
@@ -60,11 +67,13 @@ const string HELP =
     
     "Here are some examples of using the \"/search\" command:\n"
     "/search dfs rev = perform depth-first search with the insertion order of neighbours being reversed\n"
-    "/search bfs = perform breadth-first search with the insertion order of neighbours being ordinary";
+    "/search bfs = perform breadth-first search with the insertion order of neighbours being ordinary\n"
+    "/search b&b f = perform branch-and-bound search with the insertion order of neighbours being by descending F-value";
 
-void performSearchAlgorithm(const Algorithms& algorithms, const string& algorithmName, bool reversed) {
+void performSearchAlgorithm(const Algorithms& algorithms, const string& algorithmName, const string& mode) {
     
     PathWithInfo solution;
+    bool reversed = (mode == "rev");
 
     try {
 
@@ -81,7 +90,7 @@ void performSearchAlgorithm(const Algorithms& algorithms, const string& algorith
         } else if (strUtil::equalsIgnoreCase(algorithmName, "ids")) {
             solution = algorithms.iterativeDeepeningSearch(reversed);
         } else if (strUtil::equalsIgnoreCase(algorithmName, "b&b")) {
-            solution = algorithms.branchAndBoundSearch();
+            solution = algorithms.branchAndBoundSearch(mode);
         } else {
             throw runtime_error("algorithm name does not correspond to any valid search algorithm");
         }
@@ -124,7 +133,8 @@ void run() {
             algorithms.pathVisitLimit = parse::parseNumericalArgument(command);
             cout << "\nThe path visit limit has been updated to " << algorithms.pathVisitLimit << ".\n";
         } else if (parse::commandIs(command, "/search")) {
-            performSearchAlgorithm(algorithms, parse::parseArgument(command, 1), parse::numArguments(command) == 2);
+            string mode = (parse::numArguments(command) == 2) ? parse::parseArgument(command, 2) : "ord";
+            performSearchAlgorithm(algorithms, parse::parseArgument(command, 1), mode);
         } else {
             cout << ANSI_RED << "\nSorry, but your command either does not exist or has the wrong number of arguments. "
                  << "Please try again!\n" << ANSI_NORMAL;
